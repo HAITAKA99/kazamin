@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -136,7 +137,7 @@ jobs:
                 const listEl = document.getElementById('version-list');
 
                 try {{
-                  const res = await fetch(`https://api.github.com/repos/${{repo}}/tags`);
+                  const res = await fetch('https://api.github.com/repos/' + repo + '/tags');
                   if (!res.ok) return;
                   const tags = await res.json();
                   if (!Array.isArray(tags) || tags.length === 0) return;
@@ -148,14 +149,14 @@ jobs:
                     const li = document.createElement('li');
 
                     const verLink = document.createElement('a');
-                    verLink.href = `./${{tag.name}}/`;
+                    verLink.href = './' + tag.name + '/';
                     verLink.textContent = tag.name;
                     li.appendChild(verLink);
 
                     li.appendChild(document.createTextNode(' '));
                     const readmeSpan = document.createElement('span');
                     readmeSpan.className = 'readme-link';
-                    readmeSpan.innerHTML = `(<a href="https://github.com/${{repo}}/blob/main/README.md" target="_blank" rel="noopener noreferrer">README</a>)`;
+                    readmeSpan.innerHTML = '(<a href="https://github.com/' + repo + '/blob/main/README.md" target="_blank" rel="noopener noreferrer">README</a>)';
                     li.appendChild(readmeSpan);
 
                     if (isLatest) {{
