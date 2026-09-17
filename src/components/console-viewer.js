@@ -80,8 +80,8 @@ export class ConsoleViewer {
   addPacket(packet) {
     if (!packet) return;
 
-    if (this.placeholderEl && this.items.length === 0) {
-      this.placeholderEl.style.display = 'none';
+    if (this.placeholderEl && this.placeholderEl.parentNode === this.bodyEl) {
+      this.bodyEl.removeChild(this.placeholderEl);
     }
 
     const item = {
@@ -96,13 +96,12 @@ export class ConsoleViewer {
 
     this.items.push(item);
 
-    // 最大200件を超えたら先頭を削除
-    if (this.items.length > this.maxItems) {
+    // 最大保持件数を超えたら配列およびDOMの先頭（最も古い要素）を削除
+    while (this.items.length > this.maxItems) {
       this.items.shift();
-      const firstRow = this.bodyEl.firstElementChild;
-      if (firstRow && firstRow !== this.placeholderEl) {
-        this.bodyEl.removeChild(firstRow);
-      }
+    }
+    while (this.bodyEl.children.length >= this.maxItems) {
+      this.bodyEl.removeChild(this.bodyEl.firstElementChild);
     }
 
     // DOMに行を追加

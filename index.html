@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>かざみんリアルタイムモニター ver.0.1.7</title>
+  <title>かざみんリアルタイムモニター ver.0.1.8</title>
   <meta name="description" content="超音波風向風速計 かざみん (KZM100A/KZM100LR) Web Serial API リアルタイム計測モニター">
   <meta name="theme-color" content="#131f3d">
   <!-- PWA Manifest -->
@@ -1030,7 +1030,7 @@ body {
         <svg class="header-logo" width="32" height="32" viewBox="0 0 562 562" aria-label="かざみん"><use href="#kazamin-icon" xlink:href="#kazamin-icon"/></svg>
         <h1 class="header-title">
           かざみんリアルタイムモニター
-          <span class="header-version">ver.0.1.7</span>
+          <span class="header-version">ver.0.1.8</span>
         </h1>
       </div>
 
@@ -3722,8 +3722,8 @@ class ConsoleViewer {
   addPacket(packet) {
     if (!packet) return;
 
-    if (this.placeholderEl && this.items.length === 0) {
-      this.placeholderEl.style.display = 'none';
+    if (this.placeholderEl && this.placeholderEl.parentNode === this.bodyEl) {
+      this.bodyEl.removeChild(this.placeholderEl);
     }
 
     const item = {
@@ -3738,13 +3738,12 @@ class ConsoleViewer {
 
     this.items.push(item);
 
-    // 最大200件を超えたら先頭を削除
-    if (this.items.length > this.maxItems) {
+    // 最大保持件数を超えたら配列およびDOMの先頭（最も古い要素）を削除
+    while (this.items.length > this.maxItems) {
       this.items.shift();
-      const firstRow = this.bodyEl.firstElementChild;
-      if (firstRow && firstRow !== this.placeholderEl) {
-        this.bodyEl.removeChild(firstRow);
-      }
+    }
+    while (this.bodyEl.children.length >= this.maxItems) {
+      this.bodyEl.removeChild(this.bodyEl.firstElementChild);
     }
 
     // DOMに行を追加
@@ -3822,7 +3821,7 @@ class App {
   }
 
   async init() {
-    console.log('かざみんリアルタイムモニター ver.0.1.7 起動中...');
+    console.log('かざみんリアルタイムモニター ver.0.1.8 起動中...');
 
     // 1. IndexedDB 初期化
     try {
